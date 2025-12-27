@@ -147,28 +147,30 @@ function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-xl mb-4 transform hover:scale-105 transition-transform">
+            <span className="text-white text-4xl font-bold">G</span>
+          </div>
+          <h2 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
             GearGuard
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Create your account
-          </p>
+          <p className="text-gray-600 font-medium">Create your account</p>
         </div>
         
-        <form className="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-lg" onSubmit={handleSubmit}>
+        <form className="bg-white shadow-2xl rounded-2xl p-8 border border-gray-100" onSubmit={handleSubmit}>
           {submitError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{submitError}</span>
+            <div className="mb-6 bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-sm" role="alert">
+              <p className="font-medium">Error</p>
+              <p className="text-sm">{submitError}</p>
             </div>
           )}
           
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address <span className="text-red-500">*</span>
               </label>
               <input
                 id="email"
@@ -178,9 +180,11 @@ function Signup() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                  errors.email 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                }`}
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -189,8 +193,8 @@ function Signup() {
             </div>
             
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                Password <span className="text-red-500">*</span>
               </label>
               <input
                 id="password"
@@ -200,9 +204,11 @@ function Signup() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                  errors.password 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                }`}
                 placeholder="Enter your password"
               />
               {errors.password && (
@@ -218,8 +224,8 @@ function Signup() {
             </div>
             
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Re-enter Password
+              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+                Re-enter Password <span className="text-red-500">*</span>
               </label>
               <input
                 id="confirmPassword"
@@ -229,9 +235,11 @@ function Signup() {
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                  errors.confirmPassword 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                }`}
                 placeholder="Re-enter your password"
               />
               {errors.confirmPassword && (
@@ -240,17 +248,19 @@ function Signup() {
             </div>
             
             <div>
-              <label htmlFor="department_id" className="block text-sm font-medium text-gray-700 mb-1">
-                Department
+              <label htmlFor="department_id" className="block text-sm font-semibold text-gray-700 mb-2">
+                Department <span className="text-red-500">*</span>
               </label>
               <select
                 id="department_id"
                 name="department_id"
                 value={formData.department_id}
                 onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.department_id ? 'border-red-300' : 'border-gray-300'
-                } text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all bg-white ${
+                  errors.department_id 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                }`}
               >
                 <option value="">Select a department</option>
                 {departments.map((dept) => (
@@ -265,17 +275,19 @@ function Signup() {
             </div>
             
             <div>
-              <label htmlFor="location_id" className="block text-sm font-medium text-gray-700 mb-1">
-                Location
+              <label htmlFor="location_id" className="block text-sm font-semibold text-gray-700 mb-2">
+                Location <span className="text-red-500">*</span>
               </label>
               <select
                 id="location_id"
                 name="location_id"
                 value={formData.location_id}
                 onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.location_id ? 'border-red-300' : 'border-gray-300'
-                } text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all bg-white ${
+                  errors.location_id 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                }`}
               >
                 <option value="">Select a location</option>
                 {locations.map((loc) => (
@@ -290,17 +302,19 @@ function Signup() {
             </div>
             
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                Role
+              <label htmlFor="role" className="block text-sm font-semibold text-gray-700 mb-2">
+                Role <span className="text-red-500">*</span>
               </label>
               <select
                 id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.role ? 'border-red-300' : 'border-gray-300'
-                } text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all bg-white ${
+                  errors.role 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                }`}
               >
                 <option value="user">User</option>
                 <option value="technician">Technician</option>
@@ -313,8 +327,8 @@ function Signup() {
             
             {formData.role === 'admin' && (
               <div>
-                <label htmlFor="admin_secret" className="block text-sm font-medium text-gray-700 mb-1">
-                  Admin Secret
+                <label htmlFor="admin_secret" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Admin Secret <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="admin_secret"
@@ -323,9 +337,11 @@ function Signup() {
                   required
                   value={formData.admin_secret}
                   onChange={handleChange}
-                  className={`appearance-none relative block w-full px-3 py-2 border ${
-                    errors.admin_secret ? 'border-red-300' : 'border-gray-300'
-                  } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                  className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                    errors.admin_secret 
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                      : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                  }`}
                   placeholder="Enter admin secret"
                 />
                 {errors.admin_secret && (
@@ -342,18 +358,28 @@ function Signup() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {isLoading ? 'Creating account...' : 'Sign up'}
+              {isLoading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating account...
+                </span>
+              ) : (
+                'Create Account'
+              )}
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-6 pt-6 border-t border-gray-200">
             <span className="text-sm text-gray-600">
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
               >
                 Sign in
               </Link>

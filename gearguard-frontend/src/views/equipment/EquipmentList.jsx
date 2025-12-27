@@ -52,87 +52,110 @@ function EquipmentList() {
   return (
     <Layout>
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Equipment</h1>
-          {user?.role === 'admin' && (
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Equipment</h1>
+            <p className="text-gray-600">Manage and track all your equipment assets</p>
+          </div>
+          {isAdmin && (
             <Link
               to="/equipment/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2"
             >
-              Add Equipment
+              <span>➕</span>
+              <span>Add Equipment</span>
             </Link>
           )}
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 shadow-sm">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
         {equipment.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <p className="text-gray-500">No equipment found.</p>
+          <div className="bg-white rounded-xl shadow-md p-12 text-center">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-4xl">⚙️</span>
+            </div>
+            <p className="text-gray-500 text-lg">No equipment found.</p>
+            {isAdmin && (
+              <Link
+                to="/equipment/new"
+                className="mt-4 inline-block text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Add your first equipment →
+              </Link>
+            )}
           </div>
         ) : (
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
-              {equipment.map((eq) => (
-                <li key={eq.id}>
-                  <Link
-                    to={`/equipment/${eq.id}`}
-                    className="block hover:bg-gray-50 px-4 py-4 sm:px-6"
-                  >
-                    <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {equipment.map((eq) => (
+              <div
+                key={eq.id}
+                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-1"
+              >
+                <Link to={`/equipment/${eq.id}`} className="block">
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <div className="flex items-center">
-                          <p className="text-lg font-medium text-gray-900">
-                            {eq.name}
-                          </p>
-                          {eq.serial_number && (
-                            <span className="ml-3 text-sm text-gray-500">
-                              (SN: {eq.serial_number})
-                            </span>
-                          )}
-                        </div>
-                        <div className="mt-2 flex items-center text-sm text-gray-500">
-                          {eq.category && (
-                            <span className="mr-4">Category: {eq.category.name}</span>
-                          )}
-                          {eq.department && (
-                            <span className="mr-4">Dept: {eq.department.name}</span>
-                          )}
-                          {eq.company && (
-                            <span>Company: {eq.company.name}</span>
-                          )}
-                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
+                          {eq.name}
+                        </h3>
+                        {eq.serial_number && (
+                          <p className="text-sm text-gray-500">SN: {eq.serial_number}</p>
+                        )}
                       </div>
-                      {isAdmin && (
-                        <div className="flex space-x-2">
-                          <Link
-                            to={`/equipment/${eq.id}/edit`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-blue-600 hover:text-blue-800 text-sm"
-                          >
-                            Edit
-                          </Link>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              e.preventDefault()
-                              handleDelete(eq.id)
-                            }}
-                            className="text-red-600 hover:text-red-800 text-sm"
-                          >
-                            Delete
-                          </button>
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white text-xl shadow-md">
+                        ⚙️
+                      </div>
+                    </div>
+                    <div className="space-y-2 pt-4 border-t border-gray-100">
+                      {eq.category && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                          <span>Category: {eq.category.name}</span>
+                        </div>
+                      )}
+                      {eq.department && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          <span>Dept: {eq.department.name}</span>
+                        </div>
+                      )}
+                      {eq.company && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                          <span>{eq.company.name}</span>
                         </div>
                       )}
                     </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                  </div>
+                </Link>
+                {isAdmin && (
+                  <div className="px-6 pb-4 flex space-x-2 border-t border-gray-100 pt-4">
+                    <Link
+                      to={`/equipment/${eq.id}/edit`}
+                      className="flex-1 text-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleDelete(eq.id)
+                      }}
+                      className="flex-1 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>

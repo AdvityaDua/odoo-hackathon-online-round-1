@@ -6,6 +6,7 @@ import Layout from '../../components/Layout'
 
 function RequestCalendar() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -19,16 +20,13 @@ function RequestCalendar() {
     try {
       setLoading(true)
       const data = await getMaintenanceRequests()
-      // Handle case where API might not exist or returns non-array
       if (Array.isArray(data)) {
-        // Filter only preventive maintenance requests
         const preventive = data.filter(req => req.maintenance_type === 'preventive')
         setRequests(preventive)
       } else {
         setRequests([])
       }
     } catch (err) {
-      // Gracefully handle API not available
       if (err.message?.includes('404') || err.message?.includes('not found')) {
         setRequests([])
       } else {
@@ -48,11 +46,9 @@ function RequestCalendar() {
     const startingDayOfWeek = firstDay.getDay()
 
     const days = []
-    // Empty cells for days before month starts
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(null)
     }
-    // Days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(new Date(year, month, i))
     }
@@ -99,40 +95,44 @@ function RequestCalendar() {
   return (
     <Layout>
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Preventive Maintenance Calendar</h1>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Preventive Maintenance Calendar</h1>
+            <p className="text-gray-600">View and manage scheduled preventive maintenance</p>
+          </div>
           {(user?.role === 'admin' || user?.role === 'user') && (
             <Link
               to="/requests/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg text-sm font-medium hover:from-purple-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2"
             >
-              New Request
+              <span>➕</span>
+              <span>New Request</span>
             </Link>
           )}
         </div>
 
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
+          <div className="flex justify-between items-center mb-8">
             <button
               onClick={prevMonth}
-              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-6 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-gray-700 hover:border-gray-400"
             >
               ← Prev
             </button>
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-2xl font-bold text-gray-900">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             <button
               onClick={nextMonth}
-              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-6 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-gray-700 hover:border-gray-400"
             >
               Next →
             </button>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 mb-2">
+          <div className="grid grid-cols-7 gap-2 mb-3">
             {weekDays.map(day => (
-              <div key={day} className="text-center text-sm font-medium text-gray-700 py-2">
+              <div key={day} className="text-center text-sm font-bold text-gray-700 py-3 bg-gray-50 rounded-lg">
                 {day}
               </div>
             ))}
@@ -148,13 +148,17 @@ function RequestCalendar() {
                 <div
                   key={index}
                   onClick={() => day && setSelectedDate(day)}
-                  className={`min-h-[100px] border border-gray-200 rounded p-2 ${
-                    !day ? 'bg-gray-50' : 'bg-white hover:bg-gray-50 cursor-pointer'
-                  } ${isToday ? 'ring-2 ring-blue-500' : ''} ${isSelected ? 'bg-blue-50' : ''}`}
+                  className={`min-h-[120px] border-2 rounded-xl p-2 transition-all ${
+                    !day ? 'bg-gray-50 border-transparent' : 'bg-white border-gray-200 hover:border-blue-300 cursor-pointer hover:shadow-md'
+                  } ${isToday ? 'ring-4 ring-blue-400 border-blue-500' : ''} ${
+                    isSelected ? 'bg-blue-50 border-blue-400' : ''
+                  }`}
                 >
                   {day && (
                     <>
-                      <div className={`text-sm font-medium mb-1 ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                      <div className={`text-sm font-bold mb-2 ${
+                        isToday ? 'text-blue-600' : 'text-gray-900'
+                      }`}>
                         {day.getDate()}
                       </div>
                       <div className="space-y-1">
@@ -165,13 +169,13 @@ function RequestCalendar() {
                               e.stopPropagation()
                               navigate(`/requests/${req.id}`)
                             }}
-                            className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded truncate hover:bg-blue-200"
+                            className="text-xs bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-2 py-1 rounded-lg truncate hover:from-purple-600 hover:to-indigo-600 shadow-sm cursor-pointer transition-all"
                           >
                             {req.title || 'No Title'}
                           </div>
                         ))}
                         {dayRequests.length > 2 && (
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 font-semibold text-center pt-1">
                             +{dayRequests.length - 2} more
                           </div>
                         )}
@@ -184,24 +188,27 @@ function RequestCalendar() {
           </div>
 
           {selectedDate && (
-            <div className="mt-6 border-t pt-4">
-              <h3 className="font-semibold mb-2">
-                Requests for {selectedDate.toLocaleDateString()}
+            <div className="mt-8 border-t-2 border-gray-200 pt-6">
+              <h3 className="font-bold text-xl text-gray-900 mb-4">
+                Requests for {selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {getRequestsForDate(selectedDate).length === 0 ? (
-                  <p className="text-gray-500 text-sm">No requests scheduled</p>
+                  <div className="text-center py-8 bg-gray-50 rounded-xl">
+                    <p className="text-gray-500">No scheduled maintenance yet</p>
+                  </div>
                 ) : (
                   getRequestsForDate(selectedDate).map(req => (
                     <div
                       key={req.id}
                       onClick={() => navigate(`/requests/${req.id}`)}
-                      className="bg-gray-50 p-3 rounded cursor-pointer hover:bg-gray-100"
+                      className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl cursor-pointer hover:shadow-md transition-all border border-purple-200 hover:border-purple-300 transform hover:-translate-y-0.5"
                     >
-                      <p className="font-medium text-sm">{req.title || 'No Title'}</p>
+                      <p className="font-semibold text-gray-900">{req.title || 'No Title'}</p>
                       {req.equipment_name && (
-                        <p className="text-xs text-gray-600 mt-1">
-                          Equipment: {req.equipment_name}
+                        <p className="text-sm text-gray-600 mt-1 flex items-center">
+                          <span className="mr-2">⚙️</span>
+                          {req.equipment_name}
                         </p>
                       )}
                     </div>

@@ -18,13 +18,11 @@ function TeamForm() {
   })
 
   const [companies, setCompanies] = useState([])
-  const [availableTechnicians, setAvailableTechnicians] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Only admin can access team forms
     if (!isAdmin) {
       navigate('/teams')
       return
@@ -42,7 +40,6 @@ function TeamForm() {
     try {
       const comps = await getCompaniesSelect()
       setCompanies(comps)
-      // TODO: Fetch available technicians based on company
     } catch (err) {
       console.error('Error fetching options:', err)
     }
@@ -75,7 +72,6 @@ function TeamForm() {
     setSaving(true)
     setError('')
 
-    // Validate members
     if (formData.members.length === 0) {
       setError('At least one member is required')
       setSaving(false)
@@ -114,24 +110,28 @@ function TeamForm() {
 
   return (
     <Layout>
-      <div className="px-4 sm:px-6 lg:px-8 max-w-2xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {isEdit ? 'Edit Team' : 'Add Maintenance Team'}
+      <div className="px-4 sm:px-6 lg:px-8 max-w-3xl">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            {isEdit ? 'Edit Team' : 'Create Maintenance Team'}
           </h1>
+          <p className="text-gray-600">
+            {isEdit ? 'Update team information' : 'Set up a new maintenance team'}
+          </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 shadow-sm">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-xl p-8 border border-gray-100">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Team Name *
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Team Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -139,20 +139,21 @@ function TeamForm() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter team name (e.g., Mechanical Team)"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Company *
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Company <span className="text-red-500">*</span>
               </label>
               <select
                 name="company"
                 required
                 value={formData.company}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-white"
               >
                 <option value="">Select company</option>
                 {companies.map(comp => (
@@ -164,39 +165,44 @@ function TeamForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Members (Technician IDs) *
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Members (Technician User IDs) <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="Enter technician IDs separated by commas (e.g., 3, 5)"
+                placeholder="Enter technician IDs separated by commas (e.g., 3, 5, 9)"
                 value={formData.members.join(', ')}
                 onChange={(e) => {
                   const ids = e.target.value.split(',').map(id => id.trim()).filter(Boolean)
                   setFormData(prev => ({ ...prev, members: ids }))
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
               />
-              <p className="mt-1 text-xs text-gray-500">
-                Only technician user IDs belonging to the selected company. Backend will validate role and company membership.
-              </p>
+              <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium mb-1">ℹ️ Important Notes:</p>
+                <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
+                  <li>Only technician user IDs belonging to the selected company</li>
+                  <li>Backend will validate role and company membership</li>
+                  <li>All members must be technicians</li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end space-x-3">
+          <div className="mt-8 flex justify-end space-x-4 pt-6 border-t border-gray-200">
             <Link
               to="/teams"
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-6 py-3 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg text-sm font-semibold hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {saving ? 'Saving...' : isEdit ? 'Update' : 'Create'}
+              {saving ? 'Saving...' : isEdit ? 'Update Team' : 'Create Team'}
             </button>
           </div>
         </form>

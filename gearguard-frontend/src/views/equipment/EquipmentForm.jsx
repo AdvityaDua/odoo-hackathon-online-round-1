@@ -16,7 +16,6 @@ function EquipmentForm() {
     company: '',
     category: '',
     department: '',
-    employee: '',
   })
 
   const [categories, setCategories] = useState([])
@@ -61,7 +60,6 @@ function EquipmentForm() {
         company: data.company?.id || '',
         category: data.category?.id || '',
         department: data.department?.id || '',
-        employee: data.employee?.id || '',
       })
     } catch (err) {
       setError(err.message || 'Failed to load equipment')
@@ -88,7 +86,6 @@ function EquipmentForm() {
         company: parseInt(formData.company),
         category: parseInt(formData.category),
         department: formData.department ? parseInt(formData.department) : null,
-        employee: formData.employee ? parseInt(formData.employee) : null,
       }
 
       if (isEdit) {
@@ -116,24 +113,28 @@ function EquipmentForm() {
 
   return (
     <Layout>
-      <div className="px-4 sm:px-6 lg:px-8 max-w-2xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {isEdit ? 'Edit Equipment' : 'Add Equipment'}
+      <div className="px-4 sm:px-6 lg:px-8 max-w-3xl">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            {isEdit ? 'Edit Equipment' : 'Add New Equipment'}
           </h1>
+          <p className="text-gray-600">
+            {isEdit ? 'Update equipment information' : 'Register a new equipment asset'}
+          </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 shadow-sm">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white shadow-xl rounded-xl p-8 border border-gray-100">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Equipment Name *
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Equipment Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -141,13 +142,14 @@ function EquipmentForm() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Enter equipment name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Serial Number *
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Serial Number <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -155,59 +157,62 @@ function EquipmentForm() {
                 required
                 value={formData.serial_number}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Enter serial number"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Company *
-              </label>
-              <select
-                name="company"
-                required
-                value={formData.company}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select company</option>
-                {companies.map(comp => (
-                  <option key={comp.id} value={comp.id}>
-                    {comp.name} | {comp.location}
-                  </option>
-                ))}
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Company <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="company"
+                  required
+                  value={formData.company}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+                >
+                  <option value="">Select company</option>
+                  {companies.map(comp => (
+                    <option key={comp.id} value={comp.id}>
+                      {comp.name} | {comp.location}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="category"
+                  required
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+                >
+                  <option value="">Select category</option>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category *
-              </label>
-              <select
-                name="category"
-                required
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select category</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Department
               </label>
               <select
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
               >
                 <option value="">Select department</option>
                 {departments.map(dept => (
@@ -217,23 +222,21 @@ function EquipmentForm() {
                 ))}
               </select>
             </div>
-
-            {/* Employee assignment removed - handled by backend based on department */}
           </div>
 
-          <div className="mt-6 flex justify-end space-x-3">
+          <div className="mt-8 flex justify-end space-x-4 pt-6 border-t border-gray-200">
             <Link
               to="/equipment"
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-6 py-3 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {saving ? 'Saving...' : isEdit ? 'Update' : 'Create'}
+              {saving ? 'Saving...' : isEdit ? 'Update Equipment' : 'Create Equipment'}
             </button>
           </div>
         </form>

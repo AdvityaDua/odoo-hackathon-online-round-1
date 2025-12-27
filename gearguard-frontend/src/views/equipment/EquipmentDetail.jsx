@@ -58,7 +58,7 @@ function EquipmentDetail() {
     return (
       <Layout>
         <div className="px-4 sm:px-6 lg:px-8">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-sm">
             {error || 'Equipment not found'}
           </div>
         </div>
@@ -72,21 +72,22 @@ function EquipmentDetail() {
         <div className="mb-6 flex justify-between items-center">
           <Link
             to="/equipment"
-            className="text-blue-600 hover:text-blue-800 text-sm"
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"
           >
-            ← Back to Equipment
+            <span>←</span>
+            <span>Back to Equipment</span>
           </Link>
           {isAdmin && (
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               <Link
                 to={`/equipment/${id}/edit`}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 Edit
               </Link>
               <button
                 onClick={handleDelete}
-                className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 Delete
               </button>
@@ -94,54 +95,65 @@ function EquipmentDetail() {
           )}
         </div>
 
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900">{equipment.name}</h1>
-            {equipment.serial_number && (
-              <p className="text-sm text-gray-500 mt-1">Serial: {equipment.serial_number}</p>
-            )}
+        <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2">{equipment.name}</h1>
+                {equipment.serial_number && (
+                  <p className="text-blue-100">Serial: {equipment.serial_number}</p>
+                )}
+              </div>
+              <div className="w-20 h-20 bg-white bg-opacity-20 rounded-xl flex items-center justify-center text-4xl backdrop-blur-sm">
+                ⚙️
+              </div>
+            </div>
           </div>
 
-          <div className="px-6 py-4">
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="px-8 py-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {equipment.category && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Category</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{equipment.category.name}</dd>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <dt className="text-sm font-semibold text-gray-500 mb-1">Category</dt>
+                  <dd className="text-lg font-medium text-gray-900">{equipment.category.name}</dd>
                 </div>
               )}
               {equipment.company && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Company</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    {equipment.company.name} {equipment.company.location && `(${equipment.company.location})`}
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <dt className="text-sm font-semibold text-gray-500 mb-1">Company</dt>
+                  <dd className="text-lg font-medium text-gray-900">
+                    {equipment.company.name}
+                    {equipment.company.location && (
+                      <span className="text-sm text-gray-500 ml-2">({equipment.company.location})</span>
+                    )}
                   </dd>
                 </div>
               )}
               {equipment.department && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Department</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{equipment.department.name}</dd>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <dt className="text-sm font-semibold text-gray-500 mb-1">Department</dt>
+                  <dd className="text-lg font-medium text-gray-900">{equipment.department.name}</dd>
                 </div>
               )}
               {equipment.employee && (
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Assigned Employee</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{equipment.employee.email}</dd>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <dt className="text-sm font-semibold text-gray-500 mb-1">Assigned Employee</dt>
+                  <dd className="text-lg font-medium text-gray-900">{equipment.employee.email}</dd>
                 </div>
               )}
-            </dl>
+            </div>
           </div>
 
           {/* Smart Button: Maintenance Requests */}
-          <div className="px-6 py-4 border-t border-gray-200">
+          <div className="px-8 py-6 border-t border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
             <Link
-              to={`/requests?equipment=${id}`}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              to={`/requests/list?equipment=${id}`}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
             >
-              <span>Maintenance Requests</span>
+              <span className="mr-2">🔧</span>
+              <span>View Maintenance Requests</span>
               {maintenanceRequests.length > 0 && (
-                <span className="ml-2 bg-blue-700 px-2 py-1 rounded text-xs">
+                <span className="ml-3 bg-white bg-opacity-30 px-3 py-1 rounded-full text-sm font-semibold">
                   {maintenanceRequests.length}
                 </span>
               )}

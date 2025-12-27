@@ -54,18 +54,30 @@ function RequestList() {
 
   const getStatusColor = (status) => {
     const colors = {
-      new: 'bg-gray-100 text-gray-800',
-      scheduled: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-yellow-100 text-yellow-800',
-      blocked: 'bg-orange-100 text-orange-800',
-      completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
+      new: 'bg-gray-100 text-gray-800 border-gray-300',
+      scheduled: 'bg-blue-100 text-blue-800 border-blue-300',
+      in_progress: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      blocked: 'bg-orange-100 text-orange-800 border-orange-300',
+      completed: 'bg-green-100 text-green-800 border-green-300',
+      cancelled: 'bg-red-100 text-red-800 border-red-300',
     }
-    return colors[status] || 'bg-gray-100 text-gray-800'
+    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-300'
   }
 
   const getTypeColor = (type) => {
-    return type === 'preventive' ? 'bg-purple-100 text-purple-800' : 'bg-orange-100 text-orange-800'
+    return type === 'preventive' 
+      ? 'bg-purple-100 text-purple-800 border-purple-300' 
+      : 'bg-orange-100 text-orange-800 border-orange-300'
+  }
+
+  const getPriorityColor = (priority) => {
+    const colors = {
+      low: 'bg-gray-100 text-gray-700',
+      medium: 'bg-blue-100 text-blue-700',
+      high: 'bg-orange-100 text-orange-700',
+      critical: 'bg-red-100 text-red-700',
+    }
+    return colors[priority] || 'bg-gray-100 text-gray-700'
   }
 
   if (loading) {
@@ -81,33 +93,38 @@ function RequestList() {
   return (
     <Layout>
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Maintenance Requests</h1>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Maintenance Requests</h1>
+            <p className="text-gray-600">View and manage all maintenance requests</p>
+          </div>
           {(user?.role === 'admin' || user?.role === 'user') && (
             <Link
               to="/requests/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-medium hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2"
             >
-              New Request
+              <span>➕</span>
+              <span>New Request</span>
             </Link>
           )}
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 shadow-sm">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
         {/* Filters */}
-        <div className="bg-white shadow rounded-lg p-4 mb-6">
+        <div className="bg-white shadow-md rounded-xl p-6 mb-6 border border-gray-100">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Type</label>
               <select
                 value={filter.type}
                 onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 <option value="">All Types</option>
                 <option value="corrective">Corrective</option>
@@ -115,11 +132,11 @@ function RequestList() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
               <select
                 value={filter.stage}
                 onChange={(e) => setFilter({ ...filter, stage: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 <option value="">All Statuses</option>
                 <option value="new">New</option>
@@ -131,67 +148,81 @@ function RequestList() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Equipment</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Equipment ID</label>
               <input
                 type="text"
-                placeholder="Equipment ID"
+                placeholder="Filter by equipment ID"
                 value={filter.equipment}
                 onChange={(e) => setFilter({ ...filter, equipment: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
         </div>
 
-        {/* Requests Table */}
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+        {/* Requests List */}
+        <div className="space-y-4">
           {filteredRequests.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-gray-500">No requests found.</p>
+            <div className="bg-white rounded-xl shadow-md p-12 text-center">
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-4xl">🔧</span>
+              </div>
+              <p className="text-gray-500 text-lg">No requests found.</p>
             </div>
           ) : (
-            <ul className="divide-y divide-gray-200">
-              {filteredRequests.map((request) => (
-                <li key={request.id}>
-                  <div
-                    onClick={() => navigate(`/requests/${request.id}`)}
-                    className="block hover:bg-gray-50 px-4 py-4 sm:px-6 cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
+            filteredRequests.map((request) => (
+              <div
+                key={request.id}
+                onClick={() => navigate(`/requests/${request.id}`)}
+                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 cursor-pointer border border-gray-100 transform hover:-translate-y-1"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {request.title || 'No Title'}
+                      </h3>
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getTypeColor(request.maintenance_type)}`}>
+                        {request.maintenance_type}
+                      </span>
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(request.status)}`}>
+                        {request.status}
+                      </span>
+                      {request.priority && (
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getPriorityColor(request.priority)}`}>
+                          {request.priority}
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                      {request.equipment_name && (
                         <div className="flex items-center">
-                          <p className="text-lg font-medium text-gray-900">
-                            {request.title || 'No Title'}
-                          </p>
-                          <span className={`ml-3 px-2 py-1 text-xs rounded ${getTypeColor(request.maintenance_type)}`}>
-                            {request.maintenance_type}
-                          </span>
-                          <span className={`ml-2 px-2 py-1 text-xs rounded ${getStatusColor(request.status)}`}>
-                            {request.status}
-                          </span>
+                          <span className="mr-2">⚙️</span>
+                          <span>{request.equipment_name}</span>
                         </div>
-                        <div className="mt-2 flex items-center text-sm text-gray-500">
-                          {request.equipment_name && (
-                            <span className="mr-4">Equipment: {request.equipment_name}</span>
-                          )}
-                          {request.scheduled_start && (
-                            <span className="mr-4">
-                              Scheduled: {new Date(request.scheduled_start).toLocaleDateString()}
-                            </span>
-                          )}
-                          {request.technician_email && (
-                            <span>Technician: {request.technician_email}</span>
-                          )}
+                      )}
+                      {request.scheduled_start && (
+                        <div className="flex items-center">
+                          <span className="mr-2">📅</span>
+                          <span>{new Date(request.scheduled_start).toLocaleDateString()}</span>
                         </div>
-                      </div>
-                      <div className="flex-shrink-0">
-                        <span className="text-gray-400">→</span>
-                      </div>
+                      )}
+                      {request.technician_email && (
+                        <div className="flex items-center">
+                          <span className="mr-2">👤</span>
+                          <span>{request.technician_email}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                  <div className="ml-4 text-gray-400 group-hover:text-blue-600 transition-colors">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            ))
           )}
         </div>
       </div>
