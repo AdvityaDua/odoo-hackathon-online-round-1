@@ -1,108 +1,153 @@
-# 🚀 Project Title
+# 🚀 GearGuard – Smart Maintenance & Asset Management Platform
 
-> One-line problem statement + your solution in a single sentence.
+> A unified web and mobile platform that automates industrial maintenance scheduling, technician assignment, and real-time repair tracking for equipment and work centers.
 
 ---
 
 ## 🧠 Problem Statement
 
-Clearly describe:
-- What problem are you solving?
-- Who faces this problem?
-- Why existing solutions are insufficient?
+Industrial facilities rely on multiple machines, work centers, and technicians to keep operations running smoothly.  
+However, maintenance today is often:
 
-**Example:**
-Many users face difficulty in ______ due to ______, leading to ______.
+- Manual and unstructured  
+- Dependent on spreadsheets or fragmented tools  
+- Lacking real-time visibility into technician workload and repair progress  
+
+This leads to:
+- Delayed repairs  
+- Poor technician utilization  
+- No audit trail of maintenance activities  
+- Downtime impacting productivity and costs  
 
 ---
 
 ## 💡 Proposed Solution
 
-Describe your idea at a high level:
-- What are you building?
-- How does it solve the problem?
-- Why is it better than existing alternatives?
+**GearGuard** is a centralized **maintenance management system** that streamlines how maintenance requests are created, scheduled, assigned, executed, and tracked — across both **web and mobile platforms**.
 
-**Key Highlights:**
-- 🔹 Feature 1
-- 🔹 Feature 2
-- 🔹 Feature 3
+### What we built:
+- A **Flutter mobile app** for users and technicians  
+- A **React (Vite) admin portal** for full system control  
+
+### How it solves the problem:
+- Automates technician assignment based on availability and teams  
+- Treats work centers as real operational locations  
+- Enables live work updates and reassignment without data loss  
+- Maintains a complete audit trail of all maintenance activities  
+
+### 🔑 Key Highlights
+- 🔹 Automated scheduling & technician assignment  
+- 🔹 Technician work logs with real-time status updates  
+- 🔹 Reassignment with full assignment history  
+- 🔹 Role-based access for users, technicians, and admins  
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend**
-- Tech / Frameworks
+### Frontend
+- **Flutter** – Mobile app (Users & Technicians)
+- **React + Vite** – Admin & Management Portal
 
-**Backend**
-- Tech / Frameworks
+### Backend
+- **Django**
+- **Django REST Framework**
+- **JWT Authentication**
 
-**AI / ML (if applicable)**
-- Models / APIs / Libraries
+### Database
+- **PostgreSQL**
 
-**Database**
-- DB name
-
-**Cloud / Tools**
-- Hosting, DevOps, CI/CD
+### Cloud / Tools
+- GitHub (Version Control)
+- REST APIs
+- Modular, scalable backend architecture
 
 ---
 
 ## 🔄 System Architecture
 
-Explain the flow in simple steps:
+1. User or technician interacts via mobile app  
+2. Admin manages assets and teams via web portal  
+3. Backend validates roles, availability, and business rules  
+4. Maintenance logic assigns technicians and tracks progress  
+5. Updates are stored with full audit history  
+6. Results are returned instantly to web & app clients  
 
-1. User performs action  
-2. Frontend processes input  
-3. Backend handles logic  
-4. AI/ML model processes data (if any)  
-5. Result is returned to the user  
-
-*(Diagram will be added in later rounds if required)*
+*(Architecture diagram can be added in later rounds)*
 
 ---
 
 ## 🎯 Key Features
 
-- ✅ Feature 1 – short explanation  
-- ✅ Feature 2 – short explanation  
-- ✅ Feature 3 – short explanation  
+- ✅ **Maintenance Request Management**  
+  Users can create preventive or corrective maintenance requests for equipment.
+
+- ✅ **Automated Scheduling & Assignment**  
+  System assigns technicians based on availability, team, and time slot.
+
+- ✅ **Work Center–Based Maintenance**  
+  Maintenance is linked to real operational locations (work centers).
+
+- ✅ **Technician Work Logs**  
+  Technicians log progress, blockages, and completion directly from the app.
+
+- ✅ **Reassignment with Audit Trail**  
+  Maintenance can be reassigned across teams while preserving full history.
+
+- ✅ **Role-Based Access Control**  
+  Separate flows for users, technicians, and admins.
 
 ---
 
 ## 📈 Use Cases
 
-- **Use Case 1:** Who uses it and how
-- **Use Case 2:** Another real-world scenario
+### **Use Case 1: Factory User**
+A production user reports a machine issue, selects a time slot, and the system automatically assigns an available technician.
+
+### **Use Case 2: Technician**
+A technician receives assigned work on the mobile app, logs progress, escalates priority automatically, or requests reassignment if needed.
+
+### **Use Case 3: Admin**
+An admin monitors all maintenance, manages teams, equipment, work centers, and ensures smooth operations through the web portal.
 
 ---
 
 ## 🌍 Impact & Scalability
 
-- How does this help users or businesses?
-- Can it scale to more users / regions / industries?
-- Long-term vision of the product
+- 🚀 Reduces equipment downtime  
+- 📉 Improves technician utilization  
+- 🧾 Creates a complete maintenance audit trail  
+- 🏭 Scales across multiple plants, companies, and industries  
+
+**Long-term vision:**  
+Evolve GearGuard into a full CMMS platform with predictive maintenance, analytics, and AI-driven failure detection.
 
 ---
 
 ## 🔍 Why This Stands Out
 
-- What makes your idea unique?
-- Innovation, AI usage, UX, cost, speed, etc.
+- 🔥 Real-world maintenance logic, not a CRUD demo  
+- 🔄 Intelligent reassignment without losing history  
+- 📱 Seamless mobile + web experience  
+- 🧠 Strong backend architecture with clear domain modeling  
+- ⚡ Built with scalability and production-readiness in mind  
 
 ---
 
 ## 🧪 Feasibility & MVP Plan
 
-**What we will build during the hackathon:**
-- MVP Feature 1
-- MVP Feature 2
-- MVP Feature 3
+### What we built during the hackathon:
+- Maintenance request lifecycle
+- Scheduling & technician assignment
+- Technician work logs
+- Reassignment with history
+- Mobile app + admin web portal
 
-**Future Enhancements:**
-- Feature A
-- Feature B
+### Future Enhancements:
+- Predictive maintenance using ML
+- SLA & downtime analytics
+- Notifications & alerts
+- Multi-location enterprise dashboards
 
 ---
 
@@ -110,23 +155,22 @@ Explain the flow in simple steps:
 
 | Name | Role |
 |-----|------|
-| Member 1 | Role |
-| Member 2 | Role |
-| Member 3 | Role |
+| Advitya Dua | Backend  |
+| Karman Singh | Frontend (Flutter) |
+| Anmol | Frontend (React) |
+| Kashish | DB and UI design |
 
 ---
 
 ## 🔗 Demo & Links
 
-- 📹 Demo Video: _(to be added)_
-- 💻 GitHub Repo: _(to be added)_
-- 📄 PPT / Docs: _(to be added)_
+- 📹 Demo Video: _To be added_
+- 💻 GitHub Repo: _To be added_
+- 📄 PPT / Docs: _To be added_
 
 ---
 
 ## 🏁 Conclusion
 
-Summarize your idea in **2–3 strong lines** focusing on:
-- Problem
-- Solution
-- Impact
+GearGuard transforms how industrial maintenance is planned and executed by combining automation, real-time tracking, and role-based workflows across web and mobile platforms.  
+It reduces downtime, improves accountability, and brings structure to maintenance operations — making it scalable, auditable, and future-ready.
