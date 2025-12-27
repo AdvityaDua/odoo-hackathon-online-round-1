@@ -9,3 +9,5 @@ function EquipmentDetail() {
 
 export default EquipmentDetail
 
+
+

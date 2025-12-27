@@ -26,7 +26,7 @@ function ForgotPassword() {
     setIsLoading(true)
 
     try {
-      // TODO: Replace with actual API call
+      // REmember: Replace with actual API call
       // await api.post('/auth/forgot-password', { email })
       
       // Simulate API call

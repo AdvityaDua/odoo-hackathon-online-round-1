@@ -1,66 +1,103 @@
-/**
- * API utility functions
- * TODO: Replace baseURL with actual backend URL when available
- */
+import axios from 'axios'
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true,
+})
 
-export const api = {
-  async post(endpoint, data) {
-    try {
-      const response = await fetch(`${baseURL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
+// Store access token in memory (module-level variable)
+let accessToken = null
 
-      // Handle non-JSON responses
-      let result
-      const contentType = response.headers.get('content-type')
-      if (contentType && contentType.includes('application/json')) {
-        result = await response.json()
-      } else {
-        const text = await response.text()
-        throw new Error(text || 'Request failed')
-      }
-      
-      if (!response.ok) {
-        throw new Error(result.message || result.error || 'Request failed')
-      }
-      
-      return result
-    } catch (error) {
-      // Re-throw the error with a proper message
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new Error('Network error: Unable to connect to server')
-      }
-      throw error
-    }
-  },
-
-  async get(endpoint) {
-    try {
-      const response = await fetch(`${baseURL}${endpoint}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      const result = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(result.message || 'Request failed')
-      }
-      
-      return result
-    } catch (error) {
-      throw error
-    }
-  },
+// Function to set access token (called from AuthContext)
+export const setAccessToken = (token) => {
+  accessToken = token
 }
 
-export default api
+// Function to clear access token
+export const clearAccessToken = () => {
+  accessToken = null
+}
 
+// Add Authorization header if token exists (from memory)
+api.interceptors.request.use(
+  (config) => {
+    if (accessToken) {
+      config.headers['Authorization'] = `Bearer ${accessToken}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Auto-refresh on 401 errors
+let isRefreshing = false
+let failedQueue = []
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) prom.reject(error)
+    else prom.resolve(token)
+  })
+  failedQueue = []
+}
+
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config
+
+    // Only handle 401 errors and don't retry refresh endpoint itself
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/refresh/')) {
+      if (isRefreshing) {
+        // If already refreshing, queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        }).then(token => {
+          originalRequest.headers['Authorization'] = 'Bearer ' + token
+          return api(originalRequest)
+        }).catch(err => {
+          return Promise.reject(err)
+        })
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      try {
+        // Call refresh endpoint (no auth header needed, uses cookie)
+        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/refresh/`, {}, {
+          withCredentials: true
+        })
+        const newToken = res.data.access
+        
+        // Update token in memory
+        setAccessToken(newToken)
+        
+        // Process queued requests
+        processQueue(null, newToken)
+        isRefreshing = false
+
+        // Retry original request with new token
+        originalRequest.headers['Authorization'] = 'Bearer ' + newToken
+        return api(originalRequest)
+      } catch (err) {
+        // Refresh failed, clear everything and redirect to login
+        processQueue(err, null)
+        isRefreshing = false
+        clearAccessToken()
+        
+        // Trigger logout by redirecting
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
+        return Promise.reject(err)
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
+
+export default api

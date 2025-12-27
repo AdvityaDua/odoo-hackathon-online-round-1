@@ -14,3 +14,5 @@ function EquipmentList() {
 
 export default EquipmentList
 
+
+

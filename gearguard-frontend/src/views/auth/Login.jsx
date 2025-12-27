@@ -1,11 +1,23 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { validateEmail } from '../../utils/validation'
 
 function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useAuth()
+  
+  // Check for success message from signup
+  const [successMessage, setSuccessMessage] = useState(null)
+  
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message)
+      // Clear the message from location state
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state])
   
   const [formData, setFormData] = useState({
     email: '',
@@ -87,6 +99,11 @@ function Login() {
         </div>
         
         <form className="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-lg" onSubmit={handleSubmit}>
+          {successMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
+              <span className="block sm:inline">{successMessage}</span>
+            </div>
+          )}
           {submitError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
               <span className="block sm:inline">{submitError}</span>

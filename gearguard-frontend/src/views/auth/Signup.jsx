@@ -7,13 +7,28 @@ function Signup() {
   const navigate = useNavigate()
   const { signup } = useAuth()
   
+  // Location options
+  const locations = [
+    { id: 1, name: 'GearGuard Industries', location: 'Ahmedabad Plant' },
+    { id: 2, name: 'GearGuard R&D', location: 'Pune' },
+  ]
+
+const departments = [
+  { id: 1, name: 'Production' },
+  { id: 2, name: 'Maintenance' },
+  { id: 3, name: 'IT' },
+  { id: 4, name: 'Admin' },
+]
+
+
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'employee',
-    adminPassword: '',
+    role: 'user',
+    department_id: '',
+    location_id: '',
+    admin_secret: '',
   })
   
   const [errors, setErrors] = useState({})
@@ -50,10 +65,6 @@ function Signup() {
   const validateForm = () => {
     const newErrors = {}
     
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
-    }
-    
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
     } else if (!validateEmail(formData.email)) {
@@ -79,8 +90,17 @@ function Signup() {
       newErrors.role = 'Please select a role'
     }
     
-    if (formData.role === 'admin' && !formData.adminPassword) {
-      newErrors.adminPassword = 'Admin password is required'
+    if (!formData.department_id) {
+      newErrors.department_id = 'Department is required'
+    }
+
+    
+    if (!formData.location_id) {
+      newErrors.location_id = 'Location is required'
+    }
+    
+    if (formData.role === 'admin' && !formData.admin_secret) {
+      newErrors.admin_secret = 'Admin secret is required'
     }
     
     setErrors(newErrors)
@@ -99,20 +119,25 @@ function Signup() {
     
     try {
       const userData = {
-        name: formData.name,
         email: formData.email,
         password: formData.password,
         role: formData.role,
+        department_id: parseInt(formData.department_id),
+        location_id: parseInt(formData.location_id),
       }
       
-      if (formData.role === 'admin') {
-        userData.adminPassword = formData.adminPassword
+      if (formData.role === 'admin' && formData.admin_secret) {
+        userData.admin_secret = formData.admin_secret
       }
       
       const result = await signup(userData)
       
       if (result.success) {
-        navigate('/dashboard')
+        // Registration successful - redirect to login page
+        // User needs to login after registration
+        navigate('/login', { 
+          state: { message: result.message || 'Registration successful! Please login.' }
+        })
       } else {
         setSubmitError(result.error || 'Signup failed. Please try again.')
       }
@@ -143,27 +168,6 @@ function Signup() {
           )}
           
           <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                className={`appearance-none relative block w-full px-3 py-2 border ${
-                  errors.name ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                placeholder="Enter your full name"
-              />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-              )}
-            </div>
-            
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
@@ -238,6 +242,58 @@ function Signup() {
             </div>
             
             <div>
+              <label htmlFor="department_id" className="block text-sm font-medium text-gray-700 mb-1">
+                Department
+              </label>
+              <select
+                id="department_id"
+                name="department_id"
+                value={formData.department_id}
+                onChange={handleChange}
+                className={`appearance-none relative block w-full px-3 py-2 border ${
+                  errors.department_id ? 'border-red-300' : 'border-gray-300'
+                } text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+              >
+                <option value="">Select a department</option>
+                {departments.map(dep => (
+                  <option key={dep.id} value={dep.id}>
+                    {dep.name}
+                  </option>
+                ))}
+              </select>
+
+              {errors.department_id && (
+                <p className="mt-1 text-sm text-red-600">{errors.department_id}</p>
+              )}
+            </div>
+
+            
+            <div>
+              <label htmlFor="location_id" className="block text-sm font-medium text-gray-700 mb-1">
+                Location
+              </label>
+              <select
+                id="location_id"
+                name="location_id"
+                value={formData.location_id}
+                onChange={handleChange}
+                className={`appearance-none relative block w-full px-3 py-2 border ${
+                  errors.location_id ? 'border-red-300' : 'border-gray-300'
+                } text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+              >
+                <option value="">Select a location</option>
+                {locations.map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name} | {loc.location}
+                  </option>
+                ))}
+              </select>
+              {errors.location_id && (
+                <p className="mt-1 text-sm text-red-600">{errors.location_id}</p>
+              )}
+            </div>
+            
+            <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
                 Role
               </label>
@@ -250,7 +306,7 @@ function Signup() {
                   errors.role ? 'border-red-300' : 'border-gray-300'
                 } text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
               >
-                <option value="employee">Employee</option>
+                <option value="user">Employee</option>
                 <option value="technician">Technician</option>
                 <option value="admin">Admin</option>
               </select>
@@ -261,26 +317,26 @@ function Signup() {
             
             {formData.role === 'admin' && (
               <div>
-                <label htmlFor="adminPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  Admin Password
+                <label htmlFor="admin_secret" className="block text-sm font-medium text-gray-700 mb-1">
+                  Admin Secret
                 </label>
                 <input
-                  id="adminPassword"
-                  name="adminPassword"
+                  id="admin_secret"
+                  name="admin_secret"
                   type="password"
                   required
-                  value={formData.adminPassword}
+                  value={formData.admin_secret}
                   onChange={handleChange}
                   className={`appearance-none relative block w-full px-3 py-2 border ${
-                    errors.adminPassword ? 'border-red-300' : 'border-gray-300'
+                    errors.admin_secret ? 'border-red-300' : 'border-gray-300'
                   } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                  placeholder="Enter admin password"
+                  placeholder="Enter admin secret"
                 />
-                {errors.adminPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.adminPassword}</p>
+                {errors.admin_secret && (
+                  <p className="mt-1 text-sm text-red-600">{errors.admin_secret}</p>
                 )}
                 <p className="mt-1 text-xs text-gray-500">
-                  Admin password is verified by the backend
+                  Admin secret is verified by the backend
                 </p>
               </div>
             )}
