@@ -5,12 +5,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from core.models import (
+from .models import (
     Department,
     Company,
     EquipmentCategory,
     Equipment,
     WorkCenter,
+    MaintenanceTeam,
 )
 
 from .serializers import DepartmentSerializer
@@ -21,6 +22,8 @@ from .serializers import EquipmentViewSerializer
 from .serializers import WorkCenterSerializer
 from .serializers import MaintenanceEquipmentSelectSerializer
 from .serializers import MaintenanceWorkCenterSelectSerializer
+from .serializers import MaintenanceTeamSerializer
+from .serializers import MaintenanceTeamViewSerializer
 from .permissions import IsAdminForWriteElseRead
 
 
@@ -121,3 +124,19 @@ class DepartmentSelectView(APIView):
         queryset = Department.objects.all()
         serializer = DepartmentSerializer(queryset, many=True)
         return Response(serializer.data)
+
+class MaintenanceTeamViewSet(ModelViewSet):
+    permission_classes = [IsAdminForWriteElseRead]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.role == "admin":
+            return MaintenanceTeam.objects.all()
+
+        return MaintenanceTeam.objects.filter(company=user.company)
+
+    def get_serializer_class(self):
+        if self.action in ["list", "retrieve"]:
+            return MaintenanceTeamViewSerializer
+        return MaintenanceTeamSerializer

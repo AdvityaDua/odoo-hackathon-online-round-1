@@ -1,4 +1,5 @@
-from .models import Department, Company, EquipmentCategory, WorkCenter, Equipment
+from .models import Department, Company, EquipmentCategory, WorkCenter, Equipment, MaintenanceTeam
+from accounts.models import User
 from rest_framework import serializers
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -212,3 +213,29 @@ class EquipmentViewSerializer(serializers.ModelSerializer):
                 "name": obj.department.name,
             }
         return None
+
+
+class TechnicianSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email", "role"]
+
+
+class MaintenanceTeamSerializer(serializers.ModelSerializer):
+    members = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.filter(role="technician"),
+        many=True
+    )
+
+    class Meta:
+        model = MaintenanceTeam
+        fields = ["id", "name", "company", "members"]
+
+
+class MaintenanceTeamViewSerializer(serializers.ModelSerializer):
+    members = TechnicianSerializer(many=True, read_only=True)
+    company_name = serializers.CharField(source="company.name", read_only=True)
+
+    class Meta:
+        model = MaintenanceTeam
+        fields = ["id", "name", "company", "company_name", "members"]

@@ -80,3 +80,24 @@ class Equipment(models.Model):
 
     def __str__(self):
         return self.name
+    
+class MaintenanceTeam(models.Model):
+    name = models.CharField(max_length=150)
+
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name="maintenance_teams"
+    )
+
+    members = models.ManyToManyField(
+        User,
+        related_name="maintenance_teams",
+        limit_choices_to={"role": "technician"},
+        blank=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.company.name})"

@@ -32,7 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [".vercel.app", ".now.sh", "localhost", "127.0.0.1"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'accounts',
     'core',
+    'maintenance',
 ]
 
 ADMIN_SECRET_KEY = os.getenv('ADMIN_SECRET_KEY')

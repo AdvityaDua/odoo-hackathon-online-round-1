@@ -10,6 +10,7 @@ from .views import (
     WorkCenterSelectView,
     CompanySelectView,
     DepartmentSelectView,
+    MaintenanceTeamViewSet,
 )
 department_list = DepartmentViewSet.as_view({
     "get": "list",
@@ -71,6 +72,17 @@ work_center_detail = WorkCenterViewSet.as_view({
     "delete": "destroy",
 })
 
+maintenance_team_list = MaintenanceTeamViewSet.as_view({
+    "get": "list",
+    "post": "create",
+})
+
+maintenance_team_detail = MaintenanceTeamViewSet.as_view({
+    "get": "retrieve",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
+})
 
 urlpatterns = [
     path("departments/", department_list, name="department-list"),
@@ -91,4 +103,7 @@ urlpatterns = [
     path("work-centers/", work_center_list, name="work-center-list"),
     path("work-centers/<int:pk>/", work_center_detail, name="work-center-detail"),
     path("work-centers/select/", WorkCenterSelectView.as_view(), name="work-center-select"),
+    
+    path("maintenance-teams/", maintenance_team_list, name="maintenance-team-list"),
+    path("maintenance-teams/<int:pk>/", maintenance_team_detail, name="maintenance-team-detail"),
 ]
